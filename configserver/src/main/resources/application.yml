@@ -1,0 +1,35 @@
+spring:
+  application:
+    name: configserver
+  profiles:
+#    active: native
+    active: git
+  cloud:
+    config:
+      server:
+        git:
+#          uri: https://gitlab.com/niwogabajoel/bank-lessons-config.git
+          uri: https://github.com/cjxonix/bank-lessons-config.git
+          clone-on-start: true
+          default-label: main
+          #===FILE SYSTEM CONFIG===
+          #  native:
+          #      search-locations: classpath:/config
+          #      search-locations: file:/Volumes/RABBIT/DEV/2022/PROJECT_LAST_MILE/bank_lesson_configurations
+
+  #Distributed logging
+  zipkin:
+    base-url: http://localhost:9411/
+  sleuth:
+    sampler:
+      rate: 1
+server:
+  port: '8071'
+#encrypt:
+#  key: cjxonixbank
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'

@@ -1,0 +1,17 @@
+spring.main.banner-mode: off
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: update
+      generate-ddl: false
+      naming.physical-strategy: org.hibernate.boot.model.naming.CamelCaseToUnderscoresNamingStrategy
+
+  datasource:
+    url: jdbc:mysql://localhost/lesson_bank_loans?useSSL=false
+    username: root
+    password: qwerty2020
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari.connection-timeout: 60000
+    hikari.maximum-pool-size: 5
+server:
+  port: 8082

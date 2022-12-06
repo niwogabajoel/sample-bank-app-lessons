@@ -1,0 +1,169 @@
+version: "3.8"
+
+services:
+  grafana:
+    image: "grafana/grafana:latest"
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=password
+    networks:
+      - xonix-bank-network
+    depends_on:
+      - prometheus
+
+  prometheus:
+    image: prom/prometheus:latest
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    networks:
+      - xonix-bank-network
+
+  zipkin:
+    image: openzipkin/zipkin
+    ports:
+      - 9411:9411
+    networks:
+      - xonix-bank-network
+
+  configserver:
+    image: cjxonix/configserver
+    ports:
+      - "8071:8071"
+    environment:
+      server.port: 8071
+      SPRING_ZIPKIN_BASEURL: http://zipkin:9411/
+    networks:
+      - xonix-bank-network
+    depends_on:
+      - zipkin
+
+  eurekaserver:
+    image: cjxonix/eurekaserver
+    ports:
+      - "8761:8761"
+    environment:
+      SERVER_PORT: 8761
+      SPRING_ZIPKIN_BASEURL: http://zipkin:9411/
+    networks:
+      - xonix-bank-network
+    depends_on:
+      - configserver
+
+
+  gatewayserver:
+    image: cjxonix/gatewayserver
+    ports:
+      - "8072:8072"
+    environment:
+      SERVER_PORT: 8072
+      SPRING_CONFIG_IMPORT: configserver:http://configserver:8071
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eurekaserver:8761/eureka
+      SPRING_ZIPKIN_BASEURL: http://zipkin:9411/
+    networks:
+      - xonix-bank-network
+    depends_on:
+      - configserver
+      - eurekaserver
+    deploy:
+      restart_policy:
+        condition: on-failure
+        max_attempts: 5
+
+  accounts:
+    image: cjxonix/accounts
+    ports:
+      - "8081:8081"
+    environment:
+      server.port: 8081
+      spring.datasource.url: jdbc:mysql://mysql:3306/lesson_bank_accounts?useUnicode=true&characterEncoding=utf8&useSSL=false&useLegacyDatetimeCode=false&serverTimezone=UTC&createDatabaseIfNotExist=true
+      spring.datasource.username: root
+      spring.datasource.password: qwerty2020
+      SPRING_PROFILES_ACTIVE: prod
+      SPRING_CONFIG_IMPORT: configserver:http://configserver:8071
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eurekaserver:8761/eureka
+      SPRING_ZIPKIN_BASEURL: http://zipkin:9411/
+      #Feign Client URL
+      FEIGN_URL_CARDS: http://cards:8083
+      FEIGN_URL_LOANS: http://loans:8082
+    networks:
+      - xonix-bank-network
+    depends_on:
+      - mysql
+      - configserver
+      - eurekaserver
+    deploy:
+      restart_policy:
+        condition: on-failure
+        max_attempts: 5
+
+  loans:
+    image: cjxonix/loans
+    ports:
+      - "8082:8082"
+    environment:
+      server.port: 8082
+      spring.datasource.url: jdbc:mysql://mysql:3306/lesson_bank_loans?useUnicode=true&characterEncoding=utf8&useSSL=false&useLegacyDatetimeCode=false&serverTimezone=UTC&createDatabaseIfNotExist=true
+      spring.datasource.username: root
+      spring.datasource.password: qwerty2020
+      SPRING_PROFILES_ACTIVE: prod
+      SPRING_CONFIG_IMPORT: configserver:http://configserver:8071
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eurekaserver:8761/eureka
+      SPRING_ZIPKIN_BASEURL: http://zipkin:9411/
+    networks:
+      - xonix-bank-network
+    depends_on:
+      - mysql
+      - configserver
+      - eurekaserver
+    deploy:
+      restart_policy:
+        condition: on-failure
+        max_attempts: 5
+
+  cards:
+    image: cjxonix/cards
+    ports:
+      - "8083:8083"
+    environment:
+      server.port: 8083
+      spring.datasource.url: jdbc:mysql://mysql:3306/lesson_bank_cards?useUnicode=true&characterEncoding=utf8&useSSL=false&useLegacyDatetimeCode=false&serverTimezone=UTC&createDatabaseIfNotExist=true
+      spring.datasource.username: root
+      spring.datasource.password: qwerty2020
+      SPRING_PROFILES_ACTIVE: prod
+      SPRING_CONFIG_IMPORT: configserver:http://configserver:8071
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eurekaserver:8761/eureka
+      SPRING_ZIPKIN_BASEURL: http://zipkin:9411/
+      #EUREKA.CLIENT.SERVICEURL.DEFAULTZONE
+    networks:
+      - xonix-bank-network
+    depends_on:
+      - mysql
+      - configserver
+      - eurekaserver
+    deploy:
+      restart_policy:
+        condition: on-failure
+        max_attempts: 5
+
+  mysql:
+    image: mysql:5.7
+    command: mysqld --sql_mode=""
+    ports:
+      - "3306:3306"
+    volumes:
+      - bank-mysql-data:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: qwerty2020
+      MYSQL_DATABASE: lesson_bank_cards
+    networks:
+      - xonix-bank-network
+
+volumes:
+  bank-mysql-data:
+
+networks:
+  xonix-bank-network:

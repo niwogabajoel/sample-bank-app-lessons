@@ -1,0 +1,34 @@
+spring.main.banner-mode: off
+spring:
+  application:
+    name: gatewayserver
+  profiles:
+    active: prod
+  config:
+    import: optional:configserver:http://localhost:8071
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+          lower-case-service-id: true
+  #Distributed logging
+  zipkin:
+    base-url: http://localhost:9411/
+  sleuth:
+    sampler:
+      rate: 1
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+info:
+  app:
+    name: Xonix Microservice
+    description: Bank lessons for docker and kubanetes
+    version: 1.0.0
+logging:
+  level:
+    com.bank.gatewayserver: debug
