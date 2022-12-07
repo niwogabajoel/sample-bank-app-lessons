@@ -7,5 +7,14 @@ data:
   SPRING_PROFILES_ACTIVE: prod
   SPRING_CONFIG_IMPORT: configserver:http://configserver-service:8071/
   EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eurekaserver-service:8761/eureka/
+  POSTGRES_DB: mysql
+  POSTGRES_USER: postgresadmin
+  POSTGRES_PASSWORD: admin123
+  SPRING_DATASOURCE_USERNAME: root
+  SPRING_DATASOURCE_PASSWORD: qwerty2020
+  SPRING_DATASOURCE_URL_CARDS: jdbc:mysql://mysql:3306/lesson_bank_cards?useUnicode=true&characterEncoding=utf8&useSSL=false&useLegacyDatetimeCode=false&serverTimezone=UTC&createDatabaseIfNotExist=true
+  SPRING_DATASOURCE_URL_ACCOUNTS: jdbc:mysql://mysql:3306/lesson_bank_accounts?useUnicode=true&characterEncoding=utf8&useSSL=false&useLegacyDatetimeCode=false&serverTimezone=UTC&createDatabaseIfNotExist=true
+  SPRING_DATASOURCE_URL_LOANS: jdbc:mysql://mysql:3306/lesson_bank_loans?useUnicode=true&characterEncoding=utf8&useSSL=false&useLegacyDatetimeCode=false&serverTimezone=UTC&createDatabaseIfNotExist=true
+
 
 

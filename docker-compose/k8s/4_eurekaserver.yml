@@ -14,7 +14,8 @@ spec:
       name: eurekaserver
     spec:
       containers:
-        - name: cjxonix/eurekaserver
+        - name: eurekaserver
+          image: cjxonix/eurekaserver
           ports:
             - containerPort: 8761
           env:

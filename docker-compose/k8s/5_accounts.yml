@@ -40,6 +40,21 @@ spec:
             configMapKeyRef:
               name: xonixbank-configmap
               key: EUREKA_CLIENT_SERVICEURL_DEFAULTZONE
+        - name: SPRING_DATASOURCE_USERNAME
+          valueFrom:
+            configMapKeyRef:
+              name: xonixbank-configmap
+              key: SPRING_DATASOURCE_USERNAME
+        - name: SPRING_DATASOURCE_PASSWORD
+          valueFrom:
+            configMapKeyRef:
+              name: xonixbank-configmap
+              key: SPRING_DATASOURCE_PASSWORD
+        - name: SPRING_DATASOURCE_URL
+          valueFrom:
+            configMapKeyRef:
+              name: xonixbank-configmap
+              key: SPRING_DATASOURCE_URL_ACCOUNTS
 ---
 apiVersion: v1
 kind: Service

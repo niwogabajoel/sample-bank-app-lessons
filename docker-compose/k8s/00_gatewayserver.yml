@@ -14,7 +14,8 @@ spec:
         app: gatewayserver
     spec:
       containers:
-        - name: cjxonix/gatewayserver
+        - name: gatewayserver
+          image: cjxonix/gatewayserver
           ports:
             - containerPort: 8072
           env:

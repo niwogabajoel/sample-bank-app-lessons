@@ -14,7 +14,8 @@ spec:
         app: configserver
     spec:
       containers:
-        - name: cjxonix/configserver
+        - name: configserver
+          image: cjxonix/configserver
           ports:
             - containerPort: 8071
           env:
